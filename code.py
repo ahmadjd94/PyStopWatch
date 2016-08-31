@@ -9,7 +9,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import datetime
-from threading import Thread
+from threading import Thread ,Lock
+
 import time
 
 class Ui_MainWindow(object):
@@ -56,30 +57,37 @@ class Ui_MainWindow(object):
 
 
     def retranslateUi(self, MainWindow):
-        self.flag=True
+        flag=True
 
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "START"))
-        self.pushButton_2.setText(_translate("MainWindow", "PAUSE"))
-        self.pushButton_3.setText(_translate("MainWindow", "STOP"))
+        self.pushButton_2.setText(_translate("MainWindow", "STOP"))
+        self.pushButton_3.setText(_translate("MainWindow", "PAUSE"))
 
 def count():
-    while flag:
-    # print()
-        ui.lcdNumber.display(str(datetime.datetime.now() - now))
-        # self.lcdNumber.display(str(datetime.datetime.now()-now))
+    with ThreadLock:
+        while flag:
 
-        time.sleep(1)
+            ui.lcdNumber.display(str(datetime.datetime.now() - now).split('.')[0])
+            # self.lcdNumber.display(str(datetime.datetime.now()-now))
+            time.sleep(1)
+    print ('exiting')
 
 def starter ():
-    for i in threads:
-        i.start()
+    threads[0].start()
 def stop () :
+    threads[0].join()
+    ThreadLock.acquire()
     flag=False
+    print (flag)
+
+    ThreadLock.release()
 if __name__ == "__main__":
+
     flag=True
-    now =datetime.datetime.now()
+    ThreadLock= Lock()
+    now = datetime.datetime.now()
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
@@ -87,7 +95,7 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    threads = [Thread(target=count)]
+    threads = [Thread(target=count,daemon=True),Thread(target=stop,daemon=True)]
 
     # t2 = Thread(ui.stop, daemon=False)
     sys.exit(app.exec_())
