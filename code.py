@@ -7,7 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import datetime,threading
+
+import datetime
 from threading import Thread
 import time
 
@@ -28,13 +29,14 @@ class Ui_MainWindow(object):
         self.pushButton_3.setObjectName("pushButton_3")
         self.lcdNumber = QtWidgets.QLCDNumber(self.centralWidget)
         self.lcdNumber.setGeometry(QtCore.QRect(0, 0, 311, 91))
-        self.lcdNumber.setInputMethodHints(QtCore.Qt.ImhDate|QtCore.Qt.ImhTime)
+        self.lcdNumber.setInputMethodHints(QtCore.Qt.ImhDate | QtCore.Qt.ImhTime)
         self.lcdNumber.setSmallDecimalPoint(False)
+        self.lcdNumber.setDigitCount(16)
         self.lcdNumber.setProperty("intValue", 0)
         self.lcdNumber.setObjectName("lcdNumber")
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 400, 19))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 400, 20))
         self.menuBar.setObjectName("menuBar")
         MainWindow.setMenuBar(self.menuBar)
         self.mainToolBar = QtWidgets.QToolBar(MainWindow)
@@ -43,27 +45,26 @@ class Ui_MainWindow(object):
         self.statusBar = QtWidgets.QStatusBar(MainWindow)
         self.statusBar.setObjectName("statusBar")
         MainWindow.setStatusBar(self.statusBar)
-        self.pushButton.clicked.connect(self.timer)
-        self.pushButton.clicked.connect(self.stop)
+        self.pushButton.clicked.connect(self.__count__)
+        self.pushButton_2.clicked.connect(self.stop)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
     def stop(self):
-        self.flag=False
+        t1.join()
 
-        print ('process stopped ')
-    def count(self):
-
+    def __count__(self):
         while self.flag:
-            print(str((datetime.datetime.now())))
-            self.lcdNumber.display(str(datetime.datetime.second))
+            print(str(datetime.datetime.now()-now))
+            self.lcdNumber.display('3423')
+            # self.lcdNumber.display(str(datetime.datetime.now()-now))
+
             time.sleep(1)
 
 
-    def timer(self):
-        self.t1 = Thread(target=self.count,daemon=False)
-        self.t1.run()
+
     def retranslateUi(self, MainWindow):
         self.flag=True
+
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton.setText(_translate("MainWindow", "START"))
@@ -72,11 +73,15 @@ class Ui_MainWindow(object):
 
 
 if __name__ == "__main__":
+    now =datetime.datetime.now()
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
+    t1 = Thread(target=ui.__count__, daemon=True,)
+    t1.run()
+    t2 = Thread(target=ui.stop, daemon=False,)
     sys.exit(app.exec_())
 
