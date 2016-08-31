@@ -45,20 +45,13 @@ class Ui_MainWindow(object):
         self.statusBar = QtWidgets.QStatusBar(MainWindow)
         self.statusBar.setObjectName("statusBar")
         MainWindow.setStatusBar(self.statusBar)
-        self.pushButton.clicked.connect(self.__count__)
-        self.pushButton_2.clicked.connect(self.stop)
+        self.pushButton.clicked.connect(starter)
+        self.pushButton_2.clicked.connect(stop)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-    def stop(self):
-        t1.join()
 
-    def __count__(self):
-        while self.flag:
-            print(str(datetime.datetime.now()-now))
-            self.lcdNumber.display('3423')
-            # self.lcdNumber.display(str(datetime.datetime.now()-now))
 
-            time.sleep(1)
+
 
 
 
@@ -71,17 +64,33 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "PAUSE"))
         self.pushButton_3.setText(_translate("MainWindow", "STOP"))
 
+def count():
+    while flag:
+    # print()
+        ui.lcdNumber.display(str(datetime.datetime.now() - now))
+        # self.lcdNumber.display(str(datetime.datetime.now()-now))
 
+        time.sleep(1)
+
+def starter ():
+    for i in threads:
+        i.start()
+def stop () :
+    flag=False
 if __name__ == "__main__":
+    flag=True
     now =datetime.datetime.now()
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
+
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    t1 = Thread(target=ui.__count__, daemon=True,)
-    t1.run()
-    t2 = Thread(target=ui.stop, daemon=False,)
+    threads = [Thread(target=count)]
+
+    # t2 = Thread(ui.stop, daemon=False)
     sys.exit(app.exec_())
+
+
 
