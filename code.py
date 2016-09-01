@@ -9,6 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import datetime
+from pymongo import MongoClient
 from threading import Thread ,Lock
 
 import time
@@ -81,7 +82,8 @@ class Flag :
 def setup(function):
     if function=='stop':
         pass
-    elif function =='pause'
+    elif function =='pause':
+
 
 def starter ():
     if not threads[0].is_alive():
@@ -96,6 +98,9 @@ def stop () :
 
     ThreadLock.release()
 if __name__ == "__main__":
+
+    client =MongoClient() # initialize connection
+    a=client.log  #initialize connection
 
 
     ThreadLock= Lock()
