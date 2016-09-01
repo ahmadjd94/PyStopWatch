@@ -66,26 +66,38 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "PAUSE"))
 
 def count():
-    with ThreadLock:
-        while flag:
 
+    while Flag.__flag__:
+            ThreadLock.acquire()
             ui.lcdNumber.display(str(datetime.datetime.now() - now).split('.')[0])
             # self.lcdNumber.display(str(datetime.datetime.now()-now))
+            ThreadLock.release()
             time.sleep(1)
+    sessiontime =
     print ('exiting')
 
+class Flag :
+     __flag__=True
+def setup(function):
+    if function=='stop':
+        pass
+    elif function =='pause'
+
 def starter ():
-    threads[0].start()
+    if not threads[0].is_alive():
+        Flag.__flag__=True
+        threads[0].start()
+    else :
+        threads[0].run()
 def stop () :
-    threads[0].join()
+    #threads[0].join()
     ThreadLock.acquire()
-    flag=False
-    print (flag)
+    Flag.__flag__=False
 
     ThreadLock.release()
 if __name__ == "__main__":
 
-    flag=True
+
     ThreadLock= Lock()
     now = datetime.datetime.now()
     import sys
