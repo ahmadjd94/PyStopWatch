@@ -74,7 +74,7 @@ def count():
             # self.lcdNumber.display(str(datetime.datetime.now()-now))
             ThreadLock.release()
             time.sleep(1)
-    sessiontime =
+    sessiontime =datetime.datetime.now()
     print ('exiting')
 
 class Flag :
@@ -83,7 +83,7 @@ def setup(function):
     if function=='stop':
         pass
     elif function =='pause':
-
+        pass
 
 def starter ():
     if not threads[0].is_alive():
