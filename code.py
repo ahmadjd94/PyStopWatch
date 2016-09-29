@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.lineEdit = QtWidgets.QLineEdit(self.centralWidget)
         self.lineEdit.setGeometry(QtCore.QRect(120, 100, 113, 22))
         self.lineEdit.setObjectName("lineEdit")
-        self.tableView = QtWidgets.QTableView(self.centralWidget)
+        self.tableView = QtWidgets.QTableWidget(self.centralWidget)
         self.tableView.setGeometry(QtCore.QRect(10, 200, 361, 241))
         self.tableView.setObjectName("tableView")
         MainWindow.setCentralWidget(self.centralWidget)
@@ -74,7 +74,7 @@ def count():
 
     while Publics.__flag__:
             ThreadLock.acquire()
-            ui.lcdNumber.display(str(datetime.datetime.now() - now).split('.')[0])
+            ui.lcdNumber.display(str(datetime.datetime.now() - Publics.__now__).split('.')[0])
             # self.lcdNumber.display(str(datetime.datetime.now()-now))
             ThreadLock.release()
             time.sleep(1)
@@ -97,7 +97,10 @@ def starter ():
         collection.log.insert ({'name':ui.lineEdit.text(),'starttime':Publics.__now__,'status':'current'})
         ui.lineEdit.setEnabled(False)
         Publics.__flag__=True
-        threads[0].start()
+        if not threads[0].isAlive:
+            threads[0].run()
+        else:
+            threads[0].start()
     else :
         threads[0].run()
 def stop () :
@@ -110,7 +113,7 @@ def stop () :
 if __name__ == "__main__":
 
     client =MongoClient() # initialize connection
-    collection=client.log  #initialize connection
+    collection=client.log
     ThreadLock= Lock()
 
     import sys
@@ -120,11 +123,19 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    threads = [Thread(target=count,daemon=True),Thread(target=stop,daemon=True)]
+    threads = [Thread(target=count,daemon=False),Thread(target=stop,daemon=False)]
     sets=collection.log.find()
+    print(type(sets))
     row=sets.count()
+    ui.tableView.setHorizontalHeaderLabels(['name','status'])
+    ui.tableView.setItem(0, 1, QtWidgets.QTableWidgetItem('name'))
+    ui.tableView.setItem(0, 2, QtWidgets.QTableWidgetItem('status'))
     print(row)
-    a=sets.next()
+    while row >0:
+
+        print(sets.next())
+        row-=1
+    #a=sets.next()
     # while a :
     #     ui.tableView.setCurrentIndex(a)
     #     a = sets.next()
